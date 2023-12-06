@@ -1,13 +1,8 @@
 import json
-import os
 from datetime import datetime
 from typing import Any
 
 import pandas as pd
-
-current_dir = os.path.dirname(os.path.dirname(__file__))  # пути к файлу эксель
-xls_path = os.path.join(current_dir, "data", "operations_example.xls")
-json_path = os.path.join(current_dir, "data", "user_settings.json")
 
 
 def get_operation_file(path: str) -> Any:
@@ -57,9 +52,7 @@ def get_data_for_analytic(transactions: list[dict], time: str) -> list[dict]:
     correct_operations = []
 
     for operation in transactions:
-        operation_time = datetime.strptime(
-            operation["Дата операции"], "%d.%m.%Y %H:%M:%S"
-        )
+        operation_time = datetime.strptime(operation["Дата операции"], "%d.%m.%Y %H:%M:%S")
         if (
             operation_time.month == month
             and operation_time.year == year
@@ -69,10 +62,3 @@ def get_data_for_analytic(transactions: list[dict], time: str) -> list[dict]:
             correct_operations.append(operation)
 
     return correct_operations
-
-
-operation = get_operation_file(xls_path)
-operation_dict = get_dict(operation)
-# print(get_settings(json_path))
-data = get_data_for_analytic(operation_dict, '30.09.2020')
-# # # print(len(get_data_for_analytic(operation_dict, '03.12.2023')))
