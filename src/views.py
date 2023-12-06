@@ -1,12 +1,7 @@
 import datetime
 import json
-import os
 
-from check_api import get_currency, get_stocks
-from utils import data
-
-current_dir = os.path.dirname(os.path.abspath(__file__))  # пути к файлу эксель
-xls_path = os.path.join(current_dir, "data", "operations_example.xls")
+from src.check_api import get_currency, get_stocks
 
 
 def get_greetings() -> str:
@@ -35,19 +30,11 @@ def get_card(operations: list[dict]) -> list[dict]:
     :param operations:list[dict] со всеми операциями
     :return: list[dict] c указанной информацией
     """
-    unique_cards = set(
-        [x["Номер карты"] for x in operations if str(x["Номер карты"]) != "nan"]
-    )
+    unique_cards = set([x["Номер карты"] for x in operations if str(x["Номер карты"]) != "nan"])
     operation_list = []
 
     for card in unique_cards:
-        summ = -sum(
-            [
-                x["Сумма операции"]
-                for x in operations
-                if x["Сумма операции"] < 0 and x["Номер карты"] == card
-            ]
-        )
+        summ = -sum([x["Сумма операции"] for x in operations if x["Сумма операции"] < 0 and x["Номер карты"] == card])
         round_sum = round(summ, 2)
         cashback = int(round_sum / 100)
 
@@ -68,9 +55,7 @@ def top_five_operations(operations: list[dict]) -> list[dict]:
     :return: list[dict] список топ-5 операций
     """
     all_operations = []
-    sorted_operations = sorted(
-        operations, key=lambda x: abs(x["Сумма операции"]), reverse=True
-    )
+    sorted_operations = sorted(operations, key=lambda x: abs(x["Сумма операции"]), reverse=True)
     if len(sorted_operations) >= 5:
         top_operations = sorted_operations[0:5]
     else:
@@ -103,10 +88,3 @@ def final_json(operations: list[dict], settings: dict) -> str:
     json_file = json.dumps(json_dict, ensure_ascii=False, indent=2)
 
     return json_file
-
-
-# settings = {
-#  "user_currencies": ["USD", "EUR"],
-#  "user_stocks": ["AAPL", "AMZN", "GOOGL", "MSFT", "TSLA"]
-# }
-# print(final_json(data, settings))
